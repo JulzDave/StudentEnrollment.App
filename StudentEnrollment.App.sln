@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentEnrollment.Api", "StudentEnrollment.Api\StudentEnrollment.Api.csproj", "{6EBC35EA-0A4D-4468-AF0D-5A1AFDE6F104}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentEnrollment.Data", "StudentEnrollment.Data\StudentEnrollment.Data.csproj", "{B3E98AEA-E474-4134-9BD4-4D4681B63429}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EBC35EA-0A4D-4468-AF0D-5A1AFDE6F104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBC35EA-0A4D-4468-AF0D-5A1AFDE6F104}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EBC35EA-0A4D-4468-AF0D-5A1AFDE6F104}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EBC35EA-0A4D-4468-AF0D-5A1AFDE6F104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E98AEA-E474-4134-9BD4-4D4681B63429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E98AEA-E474-4134-9BD4-4D4681B63429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E98AEA-E474-4134-9BD4-4D4681B63429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E98AEA-E474-4134-9BD4-4D4681B63429}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
