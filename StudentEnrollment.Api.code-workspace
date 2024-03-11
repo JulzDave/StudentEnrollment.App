@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "StudentEnrollment.Api"
+		},
+		{
+			"path": "StudentEnrollment.Data"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/student-enrollment": true
+		}
+	}
+}
