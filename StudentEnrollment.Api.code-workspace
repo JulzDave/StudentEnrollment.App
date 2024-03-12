@@ -13,6 +13,38 @@
 	"settings": {
 		"files.exclude": {
 			"**/student-enrollment": true
-		}
+		},
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#340707",
+			"activityBar.background": "#340707",
+			"activityBar.foreground": "#e7e7e7",
+			"activityBar.inactiveForeground": "#e7e7e799",
+			"activityBarBadge.background": "#0f700f",
+			"activityBarBadge.foreground": "#e7e7e7",
+			"commandCenter.border": "#e7e7e799",
+			"sash.hoverBorder": "#340707",
+			"statusBar.background": "#070101",
+			"statusBar.foreground": "#e7e7e7",
+			"statusBarItem.hoverBackground": "#340707",
+			"statusBarItem.remoteBackground": "#070101",
+			"statusBarItem.remoteForeground": "#e7e7e7",
+			"titleBar.activeBackground": "#070101",
+			"titleBar.activeForeground": "#e7e7e7",
+			"titleBar.inactiveBackground": "#07010199",
+			"titleBar.inactiveForeground": "#e7e7e799"
+		},
+		"peacock.color": "#070101"
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-mssql.mssql",
+			"ms-dotnettools.vscode-dotnet-runtime",
+			"ms-dotnettools.csharp",
+			"ms-dotnettools.csdevkit",
+			"kreativ-software.csharpextensions",
+			"ms-dotnettools.vscodeintellicode-csharp",
+			"patcx.vscode-nuget-gallery",
+			"doggy8088.quicktype-refresh"
+		]
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using StudentEnrollment.Data.Configurations;
 
 namespace StudentEnrollment.Data
 {
@@ -10,6 +11,13 @@ namespace StudentEnrollment.Data
     {
         public StudentEnrollmentDbContext(DbContextOptions<StudentEnrollmentDbContext> options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new CourseConfigurations());
+            builder.ApplyConfiguration(new UserRoleConfigurations());
         }
 
         public DbSet<Course> Courses { get; set; }
