@@ -76,5 +76,7 @@ app.MapDelete("/courses/{id:int}", async (StudentEnrollmentDbContext context, in
 
 app.MapStudentEndpoints();
 
+app.MapEnrollmentEndpoints();
+
 
 app.Run();
