@@ -32,29 +32,46 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/courses", async (StudentEnrollmentDbContext context) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    return await context.Courses.ToListAsync();
+});
+
+app.MapGet("/courses/{id:int}", async (StudentEnrollmentDbContext context, int id) =>
+{
+    return await context.Courses.FindAsync(id) is Course course ? Results.Ok(course) : Results.NotFound();
+});
+
+app.MapPost("/courses", async (StudentEnrollmentDbContext context, Course course) =>
+{
+    await context.AddAsync(course);
+    await context.SaveChangesAsync();
+
+    return Results.Created($"/courses/{course.Id}", course);
+});
+
+app.MapPut("/courses/{id:int}", async (StudentEnrollmentDbContext context, Course course, int id) =>
+{
+    var recordExists = await context.Courses.AnyAsync(c => c.Id == id);
+    if (!recordExists) return Results.NotFound();
+
+    context.Update(course);
+    await context.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+
+app.MapDelete("/courses/{id:int}", async (StudentEnrollmentDbContext context, int id) =>
+{
+    var record = await context.Courses.FindAsync(id);
+    if (record is null) return Results.NotFound();
+
+    context.Remove(record);
+    await context.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
