@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudentEnrollment.Data;
+using StudentEnrollment.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 var conn = builder.Configuration.GetConnectionString("StudentEnrollmentDbConnection");
@@ -72,6 +73,8 @@ app.MapDelete("/courses/{id:int}", async (StudentEnrollmentDbContext context, in
 
     return Results.NoContent();
 });
+
+app.MapStudentEndpoints();
 
 
 app.Run();
