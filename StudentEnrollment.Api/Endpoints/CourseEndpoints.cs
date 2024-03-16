@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 using StudentEnrollment.Data;
+using AutoMapper;
+using StudentEnrollment.Api.DTOs;
 namespace StudentEnrollment.Api;
 
 public static class CourseEndpoints
@@ -10,9 +12,12 @@ public static class CourseEndpoints
     {
         var group = routes.MapGroup("/api/Course").WithTags(nameof(Course));
 
-        group.MapGet("/", async (StudentEnrollmentDbContext db) =>
+        group.MapGet("/", async (StudentEnrollmentDbContext db, IMapper mapper) =>
         {
-            return await db.Courses.ToListAsync();
+            var courses = await db.Courses.ToListAsync();
+            var data = mapper.Map<List<CourseDto>>(db.Courses);
+
+            return data;
         })
         .WithName("GetAllCourses")
         .WithOpenApi();
@@ -46,8 +51,9 @@ public static class CourseEndpoints
         .WithName("UpdateCourse")
         .WithOpenApi();
 
-        group.MapPost("/", async (Course course, StudentEnrollmentDbContext db) =>
+        group.MapPost("/", async (CreateCourseDto courseDto, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
+            var course = mapper.Map<Course>(courseDto);
             db.Courses.Add(course);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/api/Course/{course.Id}",course);
