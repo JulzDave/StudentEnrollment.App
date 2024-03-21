@@ -8,58 +8,61 @@ namespace StudentEnrollment.Api;
 
 public static class CourseEndpoints
 {
-    public static void MapCourseEndpoints (this IEndpointRouteBuilder routes)
+    public static void MapCourseEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/Course").WithTags(nameof(Course));
 
         group.MapGet("/", async (StudentEnrollmentDbContext db, IMapper mapper) =>
         {
             var courses = await db.Courses.ToListAsync();
-            var data = mapper.Map<List<CourseDto>>(db.Courses);
+            var data = mapper.Map<List<CourseDto>>(courses);
 
             return data;
         })
         .WithName("GetAllCourses")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<List<CourseDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id}", async Task<Results<Ok<Course>, NotFound>> (int id, StudentEnrollmentDbContext db) =>
+        group.MapGet("/{id}", async Task<Results<Ok<CourseDto>, NotFound>> (int id, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
             return await db.Courses.AsNoTracking()
                 .FirstOrDefaultAsync(model => model.Id == id)
                 is Course model
-                    ? TypedResults.Ok(model)
+                    ? TypedResults.Ok(mapper.Map<CourseDto>(model))
                     : TypedResults.NotFound();
         })
         .WithName("GetCourseById")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<CourseDto>(StatusCodes.Status200OK)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Course course, StudentEnrollmentDbContext db) =>
+        group.MapPut("/{id}", async (int id, CourseDto courseDto, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
-            var affected = await db.Courses
-                .Where(model => model.Id == id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(m => m.Title, course.Title)
-                    .SetProperty(m => m.Credits, course.Credits)
-                    .SetProperty(m => m.Id, course.Id)
-                    .SetProperty(m => m.CreatedDate, course.CreatedDate)
-                    .SetProperty(m => m.CreatedBy, course.CreatedBy)
-                    .SetProperty(m => m.ModifiedDate, course.ModifiedDate)
-                    .SetProperty(m => m.ModifiedBy, course.ModifiedBy)
-                    );
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
+            var foundModel = await db.Courses.FindAsync(id);
+
+            if (foundModel is null){
+                return Results.NotFound();
+            }
+
+            mapper.Map(courseDto, foundModel);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
         })
         .WithName("UpdateCourse")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<NoContent>(StatusCodes.Status204NoContent)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
 
         group.MapPost("/", async (CreateCourseDto courseDto, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
             var course = mapper.Map<Course>(courseDto);
             db.Courses.Add(course);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/Course/{course.Id}",course);
+            return TypedResults.Created($"/api/Course/{course.Id}", course);
         })
         .WithName("CreateCourse")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<Created<Course>>(StatusCodes.Status201Created);
 
         group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int id, StudentEnrollmentDbContext db) =>
         {
@@ -69,6 +72,8 @@ public static class CourseEndpoints
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
         })
         .WithName("DeleteCourse")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<Ok>(StatusCodes.Status200OK)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
     }
 }

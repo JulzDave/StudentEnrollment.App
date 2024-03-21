@@ -40,5 +40,4 @@ app.MapStudentEndpoints();
 app.MapEnrollmentEndpoints();
 app.MapCourseEndpoints();
 
-
 app.Run();

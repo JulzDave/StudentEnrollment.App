@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 using StudentEnrollment.Data;
+using AutoMapper;
+using StudentEnrollment.Api.DTOs;
 namespace StudentEnrollment.Api;
 
 public static class EnrollmentEndpoints
@@ -10,50 +12,55 @@ public static class EnrollmentEndpoints
     {
         var group = routes.MapGroup("/api/Enrollment").WithTags(nameof(Enrollment));
 
-        group.MapGet("/", async (StudentEnrollmentDbContext db) =>
+        group.MapGet("/", async (StudentEnrollmentDbContext db, IMapper mapper) =>
         {
-            return await db.Enrollments.ToListAsync();
+            var enrollments = await db.Enrollments.ToListAsync();
+            return mapper.Map<List<EnrollmentDto>>(enrollments);
         })
         .WithName("GetAllEnrollments")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<List<EnrollmentDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id}", async Task<Results<Ok<Enrollment>, NotFound>> (int id, StudentEnrollmentDbContext db) =>
+        group.MapGet("/{id}", async Task<Results<Ok<EnrollmentDto>, NotFound>> (int id, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
             return await db.Enrollments.AsNoTracking()
                 .FirstOrDefaultAsync(model => model.Id == id)
                 is Enrollment model
-                    ? TypedResults.Ok(model)
+                    ? TypedResults.Ok(mapper.Map<EnrollmentDto>(model))
                     : TypedResults.NotFound();
         })
         .WithName("GetEnrollmentById")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<EnrollmentDto>(StatusCodes.Status200OK)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Enrollment enrollment, StudentEnrollmentDbContext db) =>
+        group.MapPut("/{id}", async (int id, Enrollment enrollment, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
-            var affected = await db.Enrollments
-                .Where(model => model.Id == id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(m => m.CourseId, enrollment.CourseId)
-                    .SetProperty(m => m.StudentId, enrollment.StudentId)
-                    .SetProperty(m => m.Id, enrollment.Id)
-                    .SetProperty(m => m.CreatedDate, enrollment.CreatedDate)
-                    .SetProperty(m => m.CreatedBy, enrollment.CreatedBy)
-                    .SetProperty(m => m.ModifiedDate, enrollment.ModifiedDate)
-                    .SetProperty(m => m.ModifiedBy, enrollment.ModifiedBy)
-                    );
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
+            var foundModel = await db.Enrollments.FindAsync(id);
+
+            if (foundModel is null){
+                return Results.NotFound();
+            }
+
+            mapper.Map(enrollment, foundModel);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
         })
         .WithName("UpdateEnrollment")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<NoContent>(StatusCodes.Status204NoContent)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPost("/", async (Enrollment enrollment, StudentEnrollmentDbContext db) =>
+        group.MapPost("/", async (CreateEnrollmentDto enrollmentDto, StudentEnrollmentDbContext db, IMapper mapper) =>
         {
+            var enrollment = mapper.Map<Enrollment>(enrollmentDto);
             db.Enrollments.Add(enrollment);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/Enrollment/{enrollment.Id}",enrollment);
+            return TypedResults.Created($"/api/Enrollment/{enrollment.Id}", enrollment);
         })
         .WithName("CreateEnrollment")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<Created>(StatusCodes.Status201Created);
 
         group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int id, StudentEnrollmentDbContext db) =>
         {
@@ -63,6 +70,8 @@ public static class EnrollmentEndpoints
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
         })
         .WithName("DeleteEnrollment")
-        .WithOpenApi();
+        .WithOpenApi()
+        .Produces<NoContent>(StatusCodes.Status204NoContent)
+        .Produces<NotFound>(StatusCodes.Status404NotFound);
     }
 }
