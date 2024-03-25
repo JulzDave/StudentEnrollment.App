@@ -9,7 +9,7 @@ namespace StudentEnrollment.Api.Endpoints;
 
 public static class EnrollmentEndpoints
 {
-    public static void MapEnrollmentEndpoints (this IEndpointRouteBuilder routes)
+    public static void MapEnrollmentEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/Enrollment").WithTags(nameof(Enrollment));
 
@@ -38,7 +38,8 @@ public static class EnrollmentEndpoints
         {
             var foundModel = await repo.GetAsync(id);
 
-            if (foundModel is null){
+            if (foundModel is null)
+            {
                 return Results.NotFound();
             }
 
@@ -64,8 +65,7 @@ public static class EnrollmentEndpoints
 
         group.MapDelete("/{id}", async (int id, IEnrollmentRepository repo) =>
         {
-            await repo.DeleteAsync(id);
-            return Results.NoContent();
+            return await repo.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
         })
         .WithName("DeleteEnrollment")
         .WithOpenApi()

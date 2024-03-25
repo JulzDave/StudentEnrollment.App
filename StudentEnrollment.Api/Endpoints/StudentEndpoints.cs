@@ -22,7 +22,7 @@ public static class StudentEndpoints
         .WithOpenApi()
         .Produces<List<StudentDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id}", async Task<Results<Ok<StudentDto>, NotFound>>(int id, IStudentRepository repo, IMapper mapper) => 
+        group.MapGet("/{id}", async Task<Results<Ok<StudentDto>, NotFound>> (int id, IStudentRepository repo, IMapper mapper) =>
         {
             return await repo.GetAsync(id)
                 is Student model
@@ -38,7 +38,8 @@ public static class StudentEndpoints
         {
             var foundModel = await repo.GetAsync(id);
 
-            if (foundModel is null){
+            if (foundModel is null)
+            {
                 return Results.NotFound();
             }
 
@@ -63,9 +64,7 @@ public static class StudentEndpoints
 
         group.MapDelete("/{id}", async (int id, IStudentRepository repo) =>
         {
-            await repo.DeleteAsync(id);
-
-            return Results.NoContent();
+            return await repo.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
         })
         .WithName("DeleteStudent")
         .WithOpenApi()

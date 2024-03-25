@@ -65,12 +65,12 @@ public static class CourseEndpoints
 
         group.MapDelete("/{id}", async (int id, ICourseRepository repo) =>
         {
-            await repo.DeleteAsync(id);
-            return Results.NoContent();
+            
+            return await repo.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
         })
         .WithName("DeleteCourse")
         .WithOpenApi()
-        .Produces<Ok>(StatusCodes.Status200OK)
+        .Produces<Ok>(StatusCodes.Status204NoContent)
         .Produces<NotFound>(StatusCodes.Status404NotFound);
     }
 }
