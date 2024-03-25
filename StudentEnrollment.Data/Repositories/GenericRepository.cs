@@ -2,50 +2,53 @@ using Microsoft.EntityFrameworkCore;
 using StudentEnrollment.Data;
 using StudentEnrollment.Data.Contracts;
 
-public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
+namespace StudentEnrollment.Data.Repositories
 {
-    protected readonly StudentEnrollmentDbContext _db;
-
-    public GenericRepository(StudentEnrollmentDbContext db)
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        this._db = db;
-    }
+        protected readonly StudentEnrollmentDbContext _db;
 
-    public async Task<TEntity> AddAsync(TEntity entity)
-    {
-        await _db.AddAsync(entity);
-        await _db.SaveChangesAsync();
+        public GenericRepository(StudentEnrollmentDbContext db)
+        {
+            this._db = db;
+        }
 
-        return entity;
-    }
+        public async Task<TEntity> AddAsync(TEntity entity)
+        {
+            await _db.AddAsync(entity);
+            await _db.SaveChangesAsync();
 
-    public async Task DeleteAsync(int id)
-    {
-        var entity = await GetAsync(id);
-        _db.Set<TEntity>().Remove(entity);
-        await _db.SaveChangesAsync();
-    }
+            return entity;
+        }
 
-    public async Task<bool> Exists(int id)
-    {
-        return await _db.Set<TEntity>().AnyAsync(x => x.Id == id);
-    }
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await GetAsync(id);
+            _db.Set<TEntity>().Remove(entity);
+            await _db.SaveChangesAsync();
+        }
 
-    public async Task<List<TEntity>> GetAllAsync()
-    {
-        return await _db.Set<TEntity>().ToListAsync();
-    }
+        public async Task<bool> Exists(int id)
+        {
+            return await _db.Set<TEntity>().AnyAsync(x => x.Id == id);
+        }
 
-    public async Task<TEntity> GetAsync(int? id)
-    {
-        var result = await _db.Set<TEntity>().FindAsync(id);
+        public async Task<List<TEntity>> GetAllAsync()
+        {
+            return await _db.Set<TEntity>().ToListAsync();
+        }
 
-        return result;
-    }
+        public async Task<TEntity> GetAsync(int? id)
+        {
+            var result = await _db.Set<TEntity>().FindAsync(id);
 
-    public async Task UpdateAsync(TEntity entity)
-    {
-        _db.Update(entity);
-        await _db.SaveChangesAsync();
+            return result;
+        }
+
+        public async Task UpdateAsync(TEntity entity)
+        {
+            _db.Update(entity);
+            await _db.SaveChangesAsync();
+        }
     }
 }

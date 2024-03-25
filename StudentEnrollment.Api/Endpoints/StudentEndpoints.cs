@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
 using StudentEnrollment.Data;
 using AutoMapper;
 using StudentEnrollment.Api.DTOs;
-namespace StudentEnrollment.Api;
+namespace StudentEnrollment.Api.Endpoints;
 
 public static class StudentEndpoints
 {
