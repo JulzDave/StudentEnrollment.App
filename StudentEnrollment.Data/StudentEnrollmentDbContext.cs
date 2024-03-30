@@ -7,7 +7,7 @@ using StudentEnrollment.Data.Configurations;
 
 namespace StudentEnrollment.Data
 {
-    public class StudentEnrollmentDbContext : IdentityDbContext
+    public class StudentEnrollmentDbContext : IdentityDbContext<SchoolUser>
     {
         public StudentEnrollmentDbContext(DbContextOptions<StudentEnrollmentDbContext> options) : base(options)
         {
