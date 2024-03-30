@@ -17,6 +17,8 @@ namespace StudentEnrollment.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfiguration(new CourseConfigurations());
+            builder.ApplyConfiguration(new RoleConfigurations());
+            builder.ApplyConfiguration(new SchoolUserConfigurations());
             builder.ApplyConfiguration(new UserRoleConfigurations());
         }
 

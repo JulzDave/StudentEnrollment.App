@@ -33,7 +33,10 @@
 			"titleBar.inactiveBackground": "#07010199",
 			"titleBar.inactiveForeground": "#e7e7e799"
 		},
-		"peacock.color": "#070101"
+		"peacock.color": "#070101",
+		"cSpell.words": [
+			"hasher"
+		]
 	},
 	"extensions": {
 		"recommendations": [
