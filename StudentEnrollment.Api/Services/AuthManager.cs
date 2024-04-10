@@ -21,7 +21,7 @@ namespace StudentEnrollment.Api.Services
         }
         public async Task<AuthResponseDto> Login(LoginDto loginDto)
         {
-            var _user = await _userManager.FindByEmailAsync(loginDto.Username);
+            var _user = await _userManager.FindByEmailAsync(loginDto.EmailAddress);
             if (_user is null)
             {
                 return default;
@@ -39,6 +39,27 @@ namespace StudentEnrollment.Api.Services
                 Token = token,
                 UserId = _user.Id
             };
+        }
+
+        public async Task<IEnumerable<IdentityError>> Register(RegisterDto registerDto)
+        {
+            var _user = new SchoolUser
+            {
+                Email = registerDto.EmailAddress,
+                UserName = registerDto.EmailAddress,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                DateOfBirth = registerDto.DateOfBirth
+            };
+
+            var result = await _userManager.CreateAsync(_user, registerDto.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(_user, "User");
+            }
+
+            return result.Errors;
         }
 
         private async Task<string> GenerateTokenAsync(SchoolUser user)
