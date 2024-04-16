@@ -82,7 +82,7 @@ namespace StudentEnrollment.Api.Services
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(Convert.ToInt32(_configuration["JwtSettings:DurationHours"])),
+                expires: DateTime.Now.AddHours(Convert.ToInt32(_configuration["JwtSettings:DurationInHours"])),
                 signingCredentials: credentials
             );
 

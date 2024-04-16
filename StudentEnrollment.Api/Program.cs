@@ -51,6 +51,7 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
@@ -66,6 +67,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
@@ -75,4 +79,4 @@ app.MapEnrollmentEndpoints();
 app.MapCourseEndpoints();
 app.MapAuthenticationEndpoints();
 
-app.Run();
+app.Run();  
