@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using StudentEnrollment.Data;
 using AutoMapper;
 using StudentEnrollment.Api.DTOs;
 using StudentEnrollment.Data.Contracts;
-using Microsoft.AspNetCore.Authorization;
 namespace StudentEnrollment.Api.Endpoints;
 
 public static class EnrollmentEndpoints
@@ -35,7 +32,7 @@ public static class EnrollmentEndpoints
         .Produces<EnrollmentDto>(StatusCodes.Status200OK)
         .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id}", [Authorize] async (int id, Enrollment enrollment, IEnrollmentRepository repo, IMapper mapper) =>
+        group.MapPut("/{id}", async (int id, Enrollment enrollment, IEnrollmentRepository repo, IMapper mapper) =>
         {
             var foundModel = await repo.GetAsync(id);
 
@@ -54,7 +51,7 @@ public static class EnrollmentEndpoints
         .Produces<NoContent>(StatusCodes.Status204NoContent)
         .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPost("/", [Authorize] async (CreateEnrollmentDto enrollmentDto, IEnrollmentRepository repo, IMapper mapper) =>
+        group.MapPost("/", async (CreateEnrollmentDto enrollmentDto, IEnrollmentRepository repo, IMapper mapper) =>
         {
             var enrollment = mapper.Map<Enrollment>(enrollmentDto);
             await repo.AddAsync(enrollment);
@@ -64,11 +61,12 @@ public static class EnrollmentEndpoints
         .WithOpenApi()
         .Produces<Created>(StatusCodes.Status201Created);
 
-        group.MapDelete("/{id}", [Authorize(Roles = "Administrator")] async (int id, IEnrollmentRepository repo) =>
+        group.MapDelete("/{id}", async (int id, IEnrollmentRepository repo) =>
         {
             return await repo.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
         })
         .WithName("DeleteEnrollment")
+        .RequireAuthorization(x => x.RequireRole("Administrator"))
         .WithOpenApi()
         .Produces<NoContent>(StatusCodes.Status204NoContent)
         .Produces<NotFound>(StatusCodes.Status404NotFound);

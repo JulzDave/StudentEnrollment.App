@@ -11,7 +11,7 @@ namespace StudentEnrollment.Api.Endpoints
         {
             var group = routes.MapGroup("/api").WithTags("Authentication");
 
-            group.MapPost("/Login", [Authorize] async (LoginDto loginDto, IAuthManager authManager) =>
+            group.MapPost("/Login", async (LoginDto loginDto, IAuthManager authManager) =>
             {
                 var response = await authManager.Login(loginDto);
 
@@ -23,11 +23,12 @@ namespace StudentEnrollment.Api.Endpoints
                 return Results.Ok(response);
             })
             .WithName("Login")
+            .AllowAnonymous()
             .WithOpenApi()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapPost("/Register", [Authorize] async (RegisterDto registerDto, IAuthManager authManager) =>
+            group.MapPost("/Register", async (RegisterDto registerDto, IAuthManager authManager) =>
             {
                 var response = await authManager.Register(registerDto);
 
@@ -48,6 +49,7 @@ namespace StudentEnrollment.Api.Endpoints
                 return Results.BadRequest(errors);
             })
             .WithName("Register")
+            .AllowAnonymous()
             .WithOpenApi()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
