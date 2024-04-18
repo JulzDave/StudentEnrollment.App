@@ -1,4 +1,4 @@
-namespace StudentEnrollment.Api.Services
+namespace StudentEnrollment.Api.DTOs.Authentication
 {
     public class AuthResponseDto
     {

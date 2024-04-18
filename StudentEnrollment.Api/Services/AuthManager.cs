@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using StudentEnrollment.Api.Endpoints;
+using StudentEnrollment.Api.DTOs.Authentication;
 using StudentEnrollment.Data;
 
 namespace StudentEnrollment.Api.Services

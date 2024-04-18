@@ -1,4 +1,4 @@
-namespace StudentEnrollment.Api.Endpoints
+namespace StudentEnrollment.Api.DTOs.ErrorResponseDto
 {
     public class ErrorResponseDto
     {

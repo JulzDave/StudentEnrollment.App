@@ -3,6 +3,7 @@ using StudentEnrollment.Data;
 using AutoMapper;
 using StudentEnrollment.Api.DTOs;
 using StudentEnrollment.Data.Contracts;
+using FluentValidation;
 namespace StudentEnrollment.Api.Endpoints;
 
 public static class EnrollmentEndpoints
@@ -32,8 +33,13 @@ public static class EnrollmentEndpoints
         .Produces<EnrollmentDto>(StatusCodes.Status200OK)
         .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id}", async (int id, Enrollment enrollment, IEnrollmentRepository repo, IMapper mapper) =>
+        group.MapPut("/{id}", async (int id, EnrollmentDto enrollmentDto, IEnrollmentRepository repo, IMapper mapper, IValidator<EnrollmentDto> validator) =>
         {
+            var validationResult = await validator.ValidateAsync(enrollmentDto);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
             var foundModel = await repo.GetAsync(id);
 
             if (foundModel is null)
@@ -41,7 +47,7 @@ public static class EnrollmentEndpoints
                 return Results.NotFound();
             }
 
-            mapper.Map(enrollment, foundModel);
+            mapper.Map(enrollmentDto, foundModel);
             await repo.UpdateAsync(foundModel);
 
             return Results.NoContent();
@@ -51,8 +57,15 @@ public static class EnrollmentEndpoints
         .Produces<NoContent>(StatusCodes.Status204NoContent)
         .Produces<NotFound>(StatusCodes.Status404NotFound);
 
-        group.MapPost("/", async (CreateEnrollmentDto enrollmentDto, IEnrollmentRepository repo, IMapper mapper) =>
+        group.MapPost("/", async (CreateEnrollmentDto enrollmentDto, IEnrollmentRepository repo, IMapper mapper, IValidator<CreateEnrollmentDto> validator) =>
         {
+            var validationResult = await validator.ValidateAsync(enrollmentDto);
+
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+            
             var enrollment = mapper.Map<Enrollment>(enrollmentDto);
             await repo.AddAsync(enrollment);
             return TypedResults.Created($"/api/Enrollment/{enrollment.Id}", enrollment);

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using StudentEnrollment.Api.Endpoints;
+using StudentEnrollment.Api.DTOs.Authentication;
 
 namespace StudentEnrollment.Api.Services
 {
